@@ -3,6 +3,7 @@ from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker
 import inquirer 
 import pyfiglet
+import random
 
 
 
@@ -44,6 +45,7 @@ def delete_an_idea():
             print(f"Idea '{idea.idea_name}' has been deleted.")
             break
 
+
 def delete_a_project():
     project_list = session.query(Phase_3_Project).all()
     use_list = [project.project_name for project in project_list]
@@ -60,6 +62,25 @@ def delete_a_project():
             session.commit()
             print(f"Project '{project.project_name}' has been deleted.")
             break
+
+def delete_a_developer():
+    developer_list = session.query(Developer).all()
+    use_list = [developer.name for developer in developer_list]
+    use_list.append("Exit")
+
+    name = inquirer.list_input(f"{Yellow}Select a developer to delete:{Reset}", choices=use_list)
+
+    if name == "Exit":
+        return
+
+    for developer in developer_list:
+        if developer.name == name:
+            session.delete(developer)
+            session.commit()
+            print(f"The developer '{developer.name}' has been deleted.")
+            break
+    else:
+        print("Invalid developer name selected.")
 
 def find_shittiest():
     max_shittiness_scale = session.query(Shitty_Idea).order_by(Shitty_Idea.shittiness_scale.desc()).first()
@@ -101,9 +122,9 @@ def find_busy_body():
      for person in dev:
         # print('this is what i get back from most_proj_id', most_proj_id)
         if person.id == most_proj_id:
-                # print('this it person.id', person.id)
+                # print('this is person.id', person.id)
         #  text = f'{Yellow}{person.name}{Reset}{Blue} worked on like {Reset}{Yellow}{project_counts[person.id]} {Reset}{Blue}shitty projects.  They must be hella tired. {Reset}'
-         font_style = 'acrobatic'
+        #  font_style = 'acrobatic'
         #  print(pyfiglet.figlet_format(text, font = font_style))
          print(f'{Yellow}{person.name}{Reset}{Blue} worked on like {Reset}{Yellow}{project_counts[person.id]} {Reset}{Blue}shitty projects.  They must be hella tired. {Reset}')
 
@@ -196,7 +217,8 @@ if __name__ == '__main__':
         {Reset}
         {White}8.{Reset}{Red} Want to see a Tuple? It helps us hit the MVP. 
         {Reset}
-        {White}9.{Reset}{Magenta} Exit the system{Reset}
+        {White}9.{Reset}{Magenta} Delete Developer{Reset}
+        {White}10.{Reset}{Magenta} Exit the system{Reset}
         ''' )
 
         if first_choice == "1":
@@ -244,6 +266,10 @@ if __name__ == '__main__':
             most_fun()
 
         if first_choice == "8":
+            text = 'The Magic of Tuples'
+            font_style = 'slant'
+            print(pyfiglet.figlet_format(text, font = font_style))
+            
             print(f"""
 {Green}A simple use case of a tuple in Python is to represent an ordered collection of related values that are immutable (cannot be changed). Here's an example:{Reset}
 
@@ -261,8 +287,12 @@ Since tuples are immutable, you cannot change the values stored in a tuple. If y
 """)
             tuple1 = ('This', 'is', 'literally', 'being', 'printed', 'from', 'a', 'tuple.', 'NAILED', 'THE', 'MVP!!!', 'LETS GO! 🙌')
             for word in tuple1:
-                print(word)
-            
+                color_list = [Red, Green,Yellow, Blue ,Magenta, Cyan ,White]
+                random_color = random.choice(color_list)
+                print(f'{random_color}{word}{Reset}')
 
         if first_choice == "9":
+            delete_a_developer()    
+
+        if first_choice == "10":
             inCli = False
